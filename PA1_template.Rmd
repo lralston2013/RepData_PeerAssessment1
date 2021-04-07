@@ -25,26 +25,46 @@ dailyTotal <- aggregate(data$steps, by=list(data$date),
 colnames(dailyTotal) <- c("date", "steps")
 ```
 
-## Here is a histogram of the total number of steps taken each day
+Here is a histogram of the total number of steps taken each day
 ```{r dailystephist, fig.height=4}
 par(mar = c(5,4,1,1), las=1)
 hist(dailyTotal$steps, breaks = 20,
         main = "Total steps per day", 
-        ylab = "steps")
+        ylab = "steps",
+        xlab = "")
 
 ```
 
-
 ## What is mean total number of steps taken per day?
+```{r mean, echo=TRUE}
+mean(dailyTotal$steps, na.rm=TRUE)
+```
 
+## What is median total number of steps taken per day?
+```{r median, echo=TRUE}
+median(dailyTotal$steps, na.rm=TRUE)
+```
 
+## What is the average daily activity pattern? 
+Here is a plot:
+```{r dailyactivity, echo=TRUE}
+dailyActivity <- aggregate(data$steps, by=list(data$interval),
+                            FUN=mean, na.rm=TRUE)
+colnames(dailyActivity) <- c("interval", "steps")
+plot(dailyActivity$interval,dailyActivity$steps,
+     type = "l",
+     xlab = "5-min interval",
+     ylab = "mean no. of steps")
+```
 
-## What is the average daily activity pattern?
-
+```{r busyTime, echo=FALSE}
+busyTime <- dailyActivity$interval[which.max(dailyActivity$steps)]
+```
+The interval with the most steps is `r busyTime` 
 
 
 ## Imputing missing values
-
+There are `r sum(is.na(data))` missing values in the data.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
