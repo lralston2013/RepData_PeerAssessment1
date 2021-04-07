@@ -5,9 +5,34 @@ output:
     keep_md: true
 ---
 
+## Load packages and set working directory
+```{r loaddata, echo=TRUE, results='hide'}
+library(dplyr)
+library(ggplot2)
+setwd("~/prof-dev/JHU-Rprogramming/Reproducible-Research/week2")
+data <- read.csv("./data/activity.csv")
+```
 
-## Loading and preprocessing the data
+## Convert date to date class
+```{r getdate, echo=TRUE}
+data$date <- as.Date(strptime(data$date, format="%Y-%m-%d"))
+```
 
+## Total number of steps per day
+```{r dailysteptotal, echo=TRUE}
+dailyTotal <- aggregate(data$steps, by=list(data$date),
+                            FUN=sum, na.rm=TRUE)
+colnames(dailyTotal) <- c("date", "steps")
+```
+
+## Here is a histogram of the total number of steps taken each day
+```{r dailystephist, fig.height=4}
+par(mar = c(5,4,1,1), las=1)
+hist(dailyTotal$steps, breaks = 20,
+        main = "Total steps per day", 
+        ylab = "steps")
+
+```
 
 
 ## What is mean total number of steps taken per day?
