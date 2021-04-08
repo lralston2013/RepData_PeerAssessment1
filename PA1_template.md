@@ -96,6 +96,9 @@ plot(dailyActivity$interval,dailyActivity$steps,
 ![](PA1_template_files/figure-html/dailyactivity-1.png)<!-- -->
 
 
+```r
+busyTime <- dailyActivity$interval[which.max(dailyActivity$steps)]
+```
 The interval with the most steps is 835 
 
 ## Imputing missing values
@@ -167,4 +170,14 @@ wkdayActivity <- group_by(data, interval, wkday) %>%
 ```
 
 Here is a plot of steps by weekday vs weekend:
+
+```r
+ggplot(data=wkdayActivity, aes(x=interval, y=steps)) +
+  geom_bar(colour="black", stat="identity") +
+  facet_wrap(~wkday, nrow=2, ncol=1) +
+  ggtitle("Steps by Weekend vs Weekday")
+```
+
 ![](PA1_template_files/figure-html/wkdayplot-1.png)<!-- -->
+
+We see a peak in activity in the mornings during weekdays, while activity is more evenly spread throughout the day on weekends.
