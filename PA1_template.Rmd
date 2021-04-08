@@ -5,7 +5,7 @@ output:
     keep_md: true
 ---
 
-## Load packages and set working directory
+### Load packages and set working directory
 ```{r loaddata, echo=TRUE, results='hide'}
 library(dplyr)
 library(ggplot2)
@@ -13,7 +13,7 @@ setwd("~/prof-dev/JHU-Rprogramming/Reproducible-Research/week2")
 data <- read.csv("./data/activity.csv")
 ```
 
-## Convert date to date class
+### Convert date to date class
 ```{r getdate, echo=TRUE}
 data$date <- as.Date(strptime(data$date, format="%Y-%m-%d"))
 ```
@@ -35,19 +35,19 @@ hist(dailyTotal$steps, breaks = 20,
 
 ```
 
-## What is mean total number of steps taken per day?
+### What is mean total number of steps taken per day?
 ```{r mean, echo=TRUE}
 as.integer(mean(dailyTotal$steps, na.rm=TRUE))
 ```
 
-## What is median total number of steps taken per day?
+### What is median total number of steps taken per day?
 ```{r median, echo=TRUE}
 median(dailyTotal$steps, na.rm=TRUE)
 ```
 
 ## What is the average daily activity pattern? 
 Here is a plot:
-```{r dailyactivity, echo=TRUE}
+```{r dailyactivity, fig.height=4}
 dailyActivity <- aggregate(data$steps, by=list(data$interval),
                             FUN=mean, na.rm=TRUE)
 colnames(dailyActivity) <- c("interval", "steps")
@@ -92,4 +92,23 @@ The mean total number of steps taken per day is `r as.integer(mean(dailyTotal$st
 
 And the median total number of steps taken per day is `r median(dailyTotal$steps)`
 
+My method of imputation has not led to significant changes in the patterns observed before imputation.
+
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r weekday, echo=TRUE}
+data$day <- weekdays(data$date)
+data$wkday <- factor(ifelse((data$day=="Saturday" |data$day=="Sunday"), "weekend", "weekday"))
+
+wkdayActivity <- group_by(data, interval, wkday) %>% 
+  summarize(steps = mean(steps, na.rm = TRUE))
+```
+
+Here is a plot of steps by weekday vs weekend:
+```{r wkdayplot, fig.height=4, echo=FALSE}
+ggplot(data=wkdayActivity, aes(x=interval, y=steps)) +
+  geom_bar(colour="black", stat="identity") +
+  facet_wrap(~wkday, nrow=2, ncol=1) +
+  ggtitle("Steps by Weekend vs Weekday")
+
+```
