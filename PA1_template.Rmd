@@ -37,7 +37,7 @@ hist(dailyTotal$steps, breaks = 20,
 
 ## What is mean total number of steps taken per day?
 ```{r mean, echo=TRUE}
-mean(dailyTotal$steps, na.rm=TRUE)
+as.integer(mean(dailyTotal$steps, na.rm=TRUE))
 ```
 
 ## What is median total number of steps taken per day?
@@ -62,9 +62,34 @@ busyTime <- dailyActivity$interval[which.max(dailyActivity$steps)]
 ```
 The interval with the most steps is `r busyTime` 
 
-
 ## Imputing missing values
 There are `r sum(is.na(data))` missing values in the data.
 
+Where steps is NA, replace with the median for that 5-minute interval:
+
+```{r impute, echo=TRUE}
+#impute.median <- function(x) replace(x, is.na(x), median(x, na.rm = TRUE))
+#data %>%
+#  group_by(interval) %>%
+#  mutate(steps = impute.median(steps))
+
+data %>% 
+  group_by(interval) %>% 
+  mutate(steps = ifelse(is.na(steps), median(steps, na.rm = TRUE), steps))
+```
+
+After updating the daily total number of steps with the imputed data, here is a histogram of the total number of steps taken each day
+```{r dailystephist2, fig.height=4}
+par(mar = c(5,4,1,1), las=1)
+hist(dailyTotal$steps, breaks = 20,
+        main = "Total steps per day", 
+        ylab = "steps",
+        xlab = "")
+
+```
+
+The mean total number of steps taken per day is `r as.integer(mean(dailyTotal$steps))`
+
+And the median total number of steps taken per day is `r median(dailyTotal$steps)`
 
 ## Are there differences in activity patterns between weekdays and weekends?
